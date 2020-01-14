@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="style2.css">
+</head>
+<body>
+	<p>
+		salam
+	</p>
+	<script>
+	    if ('serviceWorker' in navigator) {
+	        window.addEventListener('load', () => {
+	            navigator.serviceWorker.register("./sw.js")
+	            .then((reg) => {
+	              console.log('Service worker registered.', reg);
+	            });
+	        });
+	        
+	    }
+	</script>
+</body>
+</html>
