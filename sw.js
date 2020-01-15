@@ -1,7 +1,7 @@
 const CACHE = 'cache-and-update-v1';
 const resources = [
-      '/style.css',
-      '/offline.html'
+      // '/style.css',
+      // '/offline.html'
     ]
 
 self.addEventListener('install', function(evt) {
@@ -27,6 +27,9 @@ self.addEventListener('activate', function(event) {
 
 self.addEventListener('fetch', function(evt) {
   console.log('The service worker is serving the asset.');
+  if(!(evt.request.url.indexOf('http') === 0)){
+    return evt.respondWith(fetch(evt.request))
+  }
   evt.respondWith(fromCache(evt.request));
   evt.waitUntil(update(evt.request));
 });
@@ -40,7 +43,7 @@ function precache() {
 function fromCache(request) {
   return caches.open(CACHE).then(function (cache) {
     return cache.match(request).then(function (matching) {
-      return matching || fetch(event.request).catch(error=>{
+      return matching || fetch(request).catch(error=>{
                 return caches.match('/offline.html')
             });
     });
@@ -48,6 +51,10 @@ function fromCache(request) {
 }
 
 function update(request) {
+  console.log(1, request.mode)
+  if(request.mode !== 'navigate' || request.url.origin !== location.origin){
+    return true;
+  }
   return caches.open(CACHE).then(function (cache) {
     return fetch(request).then(function (response) {
       return cache.put(request, response);
