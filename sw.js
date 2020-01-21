@@ -52,9 +52,9 @@ function fromCache(request) {
 
 function update(request) {
   console.log(1, request.mode, request.url.origin)
-  if(request.mode !== 'navigate'){
-    return true;
-  }
+  // if(request.mode !== 'navigate' && location location.){
+  //   return true;
+  // }
   return caches.open(CACHE).then(function (cache) {
     return fetch(request).then(function (response) {
       return cache.put(request, response);
