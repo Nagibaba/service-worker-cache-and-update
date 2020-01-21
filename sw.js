@@ -1,7 +1,10 @@
 const CACHE = 'cache-and-update-v1';
 const resources = [
       // '/style.css',
-      // '/offline.html'
+      '/',
+      '/offline.html',
+
+
     ]
 
 self.addEventListener('install', function(evt) {
@@ -51,13 +54,13 @@ function fromCache(request) {
 }
 
 function update(request) {
-  console.log(1, request.mode, request.url.origin)
-  if(request.mode !== 'navigate'){
-    return true;
-  }
+  console.log(1, request.mode, request.origin, request.url, request.action)
+  // if(request.mode !== 'navigate'){
+  //   return true;
+  // }
   return caches.open(CACHE).then(function (cache) {
     return fetch(request).then(function (response) {
-      console.log(response.status)
+      // console.log(response.status)
       if(response.status>=200 && response.status<300){
         return cache.put(request, response);
       } 
