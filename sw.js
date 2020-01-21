@@ -1,8 +1,8 @@
 const CACHE = 'cache-and-update-v1';
 const resources = [
       // '/style.css',
-      '/',
-      '/offline.html',
+      'service-worker-cache-and-update/',
+      '/service-worker-cache-and-update/offline.html',
 
 
     ]
@@ -47,7 +47,7 @@ function fromCache(request) {
   return caches.open(CACHE).then(function (cache) {
     return cache.match(request).then(function (matching) {
       return matching || fetch(request).catch(error=>{
-                return caches.match('/offline.html')
+                return caches.match('./offline.html')
             });
     });
   });
