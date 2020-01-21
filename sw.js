@@ -1,7 +1,7 @@
 const CACHE = 'cache-and-update-v1';
 const resources = [
       // '/style.css',
-      'service-worker-cache-and-update/',
+      '/service-worker-cache-and-update/',
       '/service-worker-cache-and-update/offline.html',
 
 
