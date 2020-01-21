@@ -61,9 +61,9 @@ function update(request) {
   return caches.open(CACHE).then(function (cache) {
     return fetch(request).then(function (response) {
       // console.log(response.status)
-      if(response.status>=200 && response.status<300){
+      // if(response.status>=200 && response.status<300){
         return cache.put(request, response);
-      } 
+      // } 
     });
   });
 }
