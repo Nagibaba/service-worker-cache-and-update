@@ -1,14 +1,29 @@
-const CACHE = 'cache-and-update-v1';
+const CACHE = 'cache-and-update-v1.1.3';
 const resources = [
       // '/style.css',
-      '/service-worker-cache-and-update/',
-      '/service-worker-cache-and-update/offline.html',
+      '/',
+      '/az',
+      '/offline.html',
+      '/az/qiymet-cedveli-9',
+      '/az/dasinma-sertleri-4',
+      '/az/nece-isleyirik-10',
+      '/az/haqqimizda-8',
+      '/az/tez-tez-verilen-suallar-7',
+      '/az/numune-saytlar-6',
+      '/az/bloq-5',
+      '/az/sifaris-et-xidmet-sertleri-3',
+      '/az/gizlilik-siyaseti-2',
+      '/az/elaqe-21'
+
 
 
     ]
 
+
+
 self.addEventListener('install', function(evt) {
   console.log('The service worker is being installed.');
+  self.skipWaiting()
   evt.waitUntil(precache());
 });
 
@@ -20,6 +35,7 @@ self.addEventListener('activate', function(event) {
           // Return true if you want to remove this cache,
           // but remember that caches are shared across
           // the whole origin
+          return cacheName !== CACHE;
         }).map(function(cacheName) {
           return caches.delete(cacheName);
         })
@@ -29,12 +45,15 @@ self.addEventListener('activate', function(event) {
 });
 
 self.addEventListener('fetch', function(evt) {
-  console.log('The service worker is serving the asset.');
-  if(!(evt.request.url.indexOf('http') === 0)){
+  console.log('e', evt.request.mode, evt.request);
+
+  if(!(evt.request.url.indexOf('http') === 0)  || evt.request.method=="POST" || evt.request.mode !== 'navigate'){
     return evt.respondWith(fetch(evt.request))
   }
   evt.respondWith(fromCache(evt.request));
-  evt.waitUntil(update(evt.request));
+  evt.waitUntil(update(evt.request)
+    // .then(refresh)
+  );
 });
 
 function precache() {
@@ -46,9 +65,9 @@ function precache() {
 function fromCache(request) {
   return caches.open(CACHE).then(function (cache) {
     return cache.match(request).then(function (matching) {
-      return matching || fetch(request).catch(error=>{
-                return caches.match('./offline.html')
-            });
+      return matching ||  fetch(request).catch(error=>{
+                              return caches.match('/offline.html')
+                          });
     });
   });
 }
@@ -62,8 +81,25 @@ function update(request) {
     return fetch(request).then(function (response) {
       // console.log(response.status)
       // if(response.status>=200 && response.status<300){
-        return cache.put(request, response);
+        return cache.put(request, response.clone()).then(function () {
+          return response;
+        });
       // } 
+    });
+  });
+}
+
+
+function refresh(response) {
+  return self.clients.matchAll().then(function (clients) {
+    clients.forEach(function (client) {
+
+      var message = {
+        type: 'refresh',
+        url: response.url,
+        eTag: response.headers.get('ETag')
+      };
+      client.postMessage(JSON.stringify(message));
     });
   });
 }
