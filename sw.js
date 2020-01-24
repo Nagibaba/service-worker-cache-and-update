@@ -104,4 +104,9 @@ function refresh(response) {
   });
 }
 
-
+// @ compare cached with network response. Should find a way to use it
+// caches.open('cache-and-update-v1.1.4').then(function (cache) {
+//     cache.match('/').then(m => m.text()).then(b=>{
+//         fetch('/az').then(res=>res.text()).then(e => console.log(b.localeCompare(e)))
+//     })
+// })
