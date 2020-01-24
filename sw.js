@@ -1,6 +1,5 @@
-const CACHE = 'cache-and-update-v1.1.3';
+const CACHE = 'cache-and-update-v1.1.4';
 const resources = [
-      // '/style.css',
       '/',
       '/az',
       '/offline.html',
@@ -45,7 +44,6 @@ self.addEventListener('activate', function(event) {
 });
 
 self.addEventListener('fetch', function(evt) {
-  console.log('e', evt.request.mode, evt.request);
 
   if(!(evt.request.url.indexOf('http') === 0)  || evt.request.method=="POST" || evt.request.mode !== 'navigate'){
     return evt.respondWith(fetch(evt.request))
@@ -73,18 +71,27 @@ function fromCache(request) {
 }
 
 function update(request) {
-  console.log(1, request.mode, request.origin, request.url, request.action)
   // if(request.mode !== 'navigate'){
   //   return true;
   // }
+
+  // don't cache if get request
+
+  if(/[?]/.test(request.url)){
+    return true;
+  }
   return caches.open(CACHE).then(function (cache) {
+
     return fetch(request).then(function (response) {
-      // console.log(response.status)
-      // if(response.status>=200 && response.status<300){
-        return cache.put(request, response.clone()).then(function () {
-          return response;
-        });
-      // } 
+      console.log(response.type)
+      if(response.status>300 || response.type!=='basic'){
+        return true;
+      }
+
+      return cache.put(request, response.clone()).then(function () {
+        return response;
+      });
+
     });
   });
 }
@@ -103,6 +110,9 @@ function refresh(response) {
     });
   });
 }
+
+
+
 
 // @ compare cached with network response. Should find a way to use it
 // caches.open('cache-and-update-v1.1.4').then(function (cache) {
